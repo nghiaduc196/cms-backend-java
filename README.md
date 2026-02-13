@@ -33,6 +33,7 @@ cms-backend-java/
 ├── common-lib/              # Shared libraries
 │   ├── src/main/java/com/base/cms/common/
 │   │   ├── dto/             # Common DTOs (ApiResponse)
+│   │   ├── entity/          # All entities (BaseAuditEntity, User, ...)
 │   │   └── exception/        # Common exceptions & handlers
 │   └── pom.xml
 │
@@ -55,7 +56,6 @@ cms-backend-java/
 │   │   ├── controller/      # REST Controllers
 │   │   ├── service/         # Business Logic
 │   │   ├── repository/       # Data Access
-│   │   ├── entity/          # JPA Entities
 │   │   └── dto/             # Data Transfer Objects
 │   ├── src/main/resources/
 │   │   └── application.properties
@@ -208,6 +208,80 @@ spring.datasource.username=root
 spring.datasource.password=123456
 ```
 
+## 📦 Entities (Common Entities)
+
+Tất cả các **Entities** được đặt trong `common-lib` để các service có thể chia sẻ và tái sử dụng. Dự án bao gồm:
+
+### Base Entity (Abstract Class)
+
+### BaseAuditEntity
+Entity đơn giản chỉ với audit cơ bản:
+- `id`: Primary key (Long)
+- `createdAt`: Thời gian tạo (LocalDateTime)
+- `updatedAt`: Thời gian cập nhật (LocalDateTime)
+
+**Sử dụng khi:**
+- Chỉ cần audit cơ bản (createdAt, updatedAt)
+- Không cần createdBy, updatedBy, isDeleted
+
+**Ví dụ:**
+```java
+@Entity
+@Table(name = "users")
+@Data
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
+public class User extends BaseAuditEntity {
+    private String email;
+    private String name;
+}
+```
+
+### Business Entities
+
+Các entities cụ thể như `User`, `Product`, `Order`, ... cũng được đặt trong `common-lib/src/main/java/com/base/cms/common/entity/`:
+
+**Ví dụ: User Entity**
+```java
+package com.base.cms.common.entity;
+
+@Entity
+@Table(name = "users")
+@Data
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
+public class User extends BaseAuditEntity {
+    private String email;
+    private String name;
+}
+```
+
+### Lưu ý khi sử dụng Entities:
+
+1. **Tất cả entities đều nằm trong `common-lib`:**
+   - Base entity: `BaseAuditEntity`
+   - Business entities: `User`, `Product`, `Order`, ...
+
+2. **Import từ common-lib:**
+```java
+import com.base.cms.common.entity.User;
+import com.base.cms.common.entity.BaseAuditEntity;
+```
+
+3. **Sử dụng Lombok annotations:**
+- `@EqualsAndHashCode(callSuper = true)`: Để include các trường từ base class
+- `@SuperBuilder`: Để hỗ trợ builder pattern với inheritance
+
+4. **Database columns:**
+Các trường từ base entity sẽ tự động được map vào database:
+- `id` → `id` (BIGINT, AUTO_INCREMENT)
+- `createdAt` → `created_at` (DATETIME)
+- `updatedAt` → `updated_at` (DATETIME)
+
+5. **Repository và Service:**
+- Repository và Service vẫn nằm trong từng service riêng
+- Chỉ entities được chia sẻ trong `common-lib`
+
 ## 🏗️ Thêm Service mới
 
 Để thêm một microservice mới (ví dụ: Product Service):
@@ -241,18 +315,44 @@ mkdir -p product-service/src/main/resources
 <dependency>
     <groupId>com.base</groupId>
     <artifactId>common-lib</artifactId>
-    <version>${project.version}</version>
 </dependency>
 ```
 
-5. **Cấu hình trong API Gateway:**
+5. **Tạo Entity trong common-lib:**
+```java
+// File: common-lib/src/main/java/com/base/cms/common/entity/Product.java
+package com.base.cms.common.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+@Entity
+@Table(name = "products")
+@Data
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class Product extends BaseAuditEntity {
+    @Column(nullable = false)
+    private String name;
+    
+    @Column(nullable = false)
+    private BigDecimal price;
+}
+```
+
+**Lưu ý:** Tất cả entities phải được tạo trong `common-lib`, không tạo trong các service riêng.
+
+6. **Cấu hình trong API Gateway:**
 ```properties
 spring.cloud.gateway.routes[1].id=product-service
 spring.cloud.gateway.routes[1].uri=lb://product-service
 spring.cloud.gateway.routes[1].predicates[0]=Path=/api/products/**
 ```
 
-6. **Thêm vào docker-compose.yml:**
+7. **Thêm vào docker-compose.yml:**
 ```yaml
 product-service:
   build:

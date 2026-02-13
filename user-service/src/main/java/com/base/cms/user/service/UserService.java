@@ -1,10 +1,10 @@
 package com.base.cms.user.service;
 
+import com.base.cms.common.entity.User;
 import com.base.cms.common.exception.BadRequestException;
 import com.base.cms.common.exception.ResourceNotFoundException;
 import com.base.cms.user.dto.UserRequest;
 import com.base.cms.user.dto.UserResponse;
-import com.base.cms.user.entity.User;
 import com.base.cms.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,9 +25,10 @@ public class UserService {
             throw new BadRequestException("Email already exists");
         }
 
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setName(request.getName());
+        User user = User.builder()
+                .email(request.getEmail())
+                .name(request.getName())
+                .build();
 
         User savedUser = userRepository.save(user);
         return mapToResponse(savedUser);
