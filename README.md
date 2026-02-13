@@ -1,260 +1,351 @@
-# CMS Backend Java - Spring Boot REST API
+# CMS Microservices - Spring Boot Architecture
 
-Backend cho dự án CMS bằng Java Spring Boot với REST API.
+Dự án CMS được xây dựng theo kiến trúc **Microservices** sử dụng Spring Boot và Spring Cloud.
+
+## 🏗️ Kiến trúc Microservices
+
+```
+┌─────────────────┐
+│   API Gateway   │ (Port 8080)
+│  (Spring Cloud  │
+│     Gateway)    │
+└────────┬────────┘
+         │
+         ├─────────────────┐
+         │                 │
+┌────────▼────────┐  ┌─────▼──────────┐
+│ Service Discovery│  │  User Service   │
+│  (Eureka Server)│  │  (Port 8081)   │
+│   (Port 8761)    │  └────────────────┘
+└──────────────────┘
+         │
+         │
+┌────────▼────────┐
+│  MySQL Database │
+│   (Port 3306)   │
+└─────────────────┘
+```
+
+## 📦 Cấu trúc Project
+
+```
+cms-backend-java/
+├── common-lib/              # Shared libraries
+│   ├── src/main/java/com/base/cms/common/
+│   │   ├── dto/             # Common DTOs (ApiResponse)
+│   │   └── exception/        # Common exceptions & handlers
+│   └── pom.xml
+│
+├── service-discovery/       # Eureka Server
+│   ├── src/main/java/com/base/cms/discovery/
+│   │   └── ServiceDiscoveryApplication.java
+│   ├── src/main/resources/
+│   │   └── application.properties
+│   └── pom.xml
+│
+├── api-gateway/             # Spring Cloud Gateway
+│   ├── src/main/java/com/base/cms/gateway/
+│   │   └── ApiGatewayApplication.java
+│   ├── src/main/resources/
+│   │   └── application.properties
+│   └── pom.xml
+│
+├── user-service/            # User Management Service
+│   ├── src/main/java/com/base/cms/user/
+│   │   ├── controller/      # REST Controllers
+│   │   ├── service/         # Business Logic
+│   │   ├── repository/       # Data Access
+│   │   ├── entity/          # JPA Entities
+│   │   └── dto/             # Data Transfer Objects
+│   ├── src/main/resources/
+│   │   └── application.properties
+│   └── pom.xml
+│
+├── pom.xml                   # Parent POM
+├── docker-compose.yml        # Docker Compose configuration
+└── README.md
+```
 
 ## 🚀 Công nghệ sử dụng
 
 - **Java 17**
 - **Spring Boot 4.0.2**
+- **Spring Cloud 2024.0.0**
+- **Spring Cloud Gateway** - API Gateway
+- **Netflix Eureka** - Service Discovery
 - **Spring Data JPA** - ORM và database access
-- **MySQL** - Database
+- **MySQL 8.0** - Database
 - **Lombok** - Giảm boilerplate code
-- **Spring Validation** - Validate request data
 - **SpringDoc OpenAPI (Swagger)** - API documentation
+- **Docker & Docker Compose** - Containerization
 - **Maven** - Dependency management
 
-## 📁 Cấu trúc Project
+## ⚙️ Cấu hình Services
 
-```
-src/main/java/com/base/cms/
-├── common/                    # Common utilities và base classes
-│   ├── config/               # Configuration classes
-│   │   ├── CorsConfig.java   # CORS configuration
-│   │   └── OpenApiConfig.java # Swagger/OpenAPI configuration
-│   ├── controller/           # Common controllers
-│   │   └── HealthController.java
-│   ├── dto/                  # Common DTOs
-│   │   └── ApiResponse.java  # Standard API response wrapper
-│   └── exception/            # Exception handling
-│       ├── BadRequestException.java
-│       ├── ResourceNotFoundException.java
-│       └── GlobalExceptionHandler.java
-├── example/                   # Example module (có thể xóa sau)
-│   ├── controller/
-│   │   └── UserController.java
-│   ├── dto/
-│   │   ├── UserRequest.java
-│   │   └── UserResponse.java
-│   ├── entity/
-│   │   └── User.java
-│   ├── repository/
-│   │   └── UserRepository.java
-│   └── service/
-│       └── UserService.java
-└── CmsApplication.java        # Main application class
-```
+### Service Discovery (Eureka)
+- **Port**: 8761
+- **URL**: http://localhost:8761
+- **Chức năng**: Quản lý và phát hiện các microservices
 
-## ⚙️ Cấu hình
+### API Gateway
+- **Port**: 8080
+- **URL**: http://localhost:8080
+- **Chức năng**: 
+  - Routing requests đến các services
+  - Load balancing
+  - CORS handling
+  - API aggregation
 
-### Database Configuration
-
-Cập nhật thông tin database trong `src/main/resources/application.properties`:
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/cms_db
-spring.datasource.username=root
-spring.datasource.password=your_password
-```
-
-### Port Configuration
-
-Mặc định server chạy trên port `8080`. Có thể thay đổi trong `application.properties`:
-
-```properties
-server.port=8080
-```
+### User Service
+- **Port**: 8081
+- **Database**: `user_db`
+- **Chức năng**: Quản lý users (CRUD operations)
 
 ## 🏃 Chạy ứng dụng
 
 ### Yêu cầu
 - Java 17 hoặc cao hơn
 - Maven 3.6+
-- MySQL 8.0+
+- MySQL 8.0+ (hoặc sử dụng Docker)
+- Docker & Docker Compose (nếu chạy bằng Docker)
 
-### Các bước chạy
+### Cách 1: Chạy bằng Docker Compose (Khuyến nghị)
 
-1. **Clone và vào thư mục project:**
+1. **Build và chạy tất cả services:**
 ```bash
-cd cms-backend-java
+docker-compose up --build
 ```
 
-2. **Cấu hình database:**
-   - Tạo database MySQL: `cms_db`
-   - Cập nhật username/password trong `application.properties`
-
-3. **Build project:**
+2. **Chạy ở background:**
 ```bash
-./mvnw clean install
+docker-compose up -d
 ```
 
-4. **Chạy ứng dụng:**
+3. **Xem logs:**
 ```bash
-./mvnw spring-boot:run
+docker-compose logs -f
 ```
 
-Hoặc chạy trực tiếp:
+4. **Dừng tất cả services:**
 ```bash
-java -jar target/cms-0.0.1-SNAPSHOT.jar
+docker-compose down
 ```
 
-5. **Kiểm tra ứng dụng:**
-   - Health check: http://localhost:8080/api/health
-   - API Base URL: http://localhost:8080/api
-   - **Swagger UI**: http://localhost:8080/swagger-ui.html
-   - **API Docs (JSON)**: http://localhost:8080/api-docs
+### Cách 2: Chạy thủ công từng service
+
+**Bước 1: Khởi động MySQL**
+```bash
+# Sử dụng Docker
+docker run -d \
+  --name cms-mysql \
+  -e MYSQL_ROOT_PASSWORD=123456 \
+  -e MYSQL_DATABASE=user_db \
+  -p 3306:3306 \
+  mysql:8.0
+```
+
+**Bước 2: Khởi động Service Discovery**
+```bash
+cd service-discovery
+../mvnw spring-boot:run
+```
+
+**Bước 3: Khởi động User Service**
+```bash
+cd user-service
+../mvnw spring-boot:run
+```
+
+**Bước 4: Khởi động API Gateway**
+```bash
+cd api-gateway
+../mvnw spring-boot:run
+```
+
+### Thứ tự khởi động (quan trọng)
+1. MySQL Database
+2. Service Discovery (Eureka)
+3. User Service
+4. API Gateway
 
 ## 📡 API Endpoints
 
-### Health Check
-- `GET /api/health` - Kiểm tra trạng thái ứng dụng
+### Qua API Gateway (Port 8080)
 
-### User API (Example)
-- `POST /api/users` - Tạo user mới
-- `GET /api/users` - Lấy danh sách tất cả users
-- `GET /api/users/{id}` - Lấy thông tin user theo ID
-- `PUT /api/users/{id}` - Cập nhật user
-- `DELETE /api/users/{id}` - Xóa user
+- **User Service APIs:**
+  - `GET http://localhost:8080/api/users` - Lấy danh sách users
+  - `GET http://localhost:8080/api/users/{id}` - Lấy user theo ID
+  - `POST http://localhost:8080/api/users` - Tạo user mới
+  - `PUT http://localhost:8080/api/users/{id}` - Cập nhật user
+  - `DELETE http://localhost:8080/api/users/{id}` - Xóa user
 
-### Example Request/Response
+### Trực tiếp từ User Service (Port 8081)
 
-**Tạo User:**
+- `GET http://localhost:8081/api/users` - Lấy danh sách users
+- `GET http://localhost:8081/api/users/{id}` - Lấy user theo ID
+- `POST http://localhost:8081/api/users` - Tạo user mới
+- `PUT http://localhost:8081/api/users/{id}` - Cập nhật user
+- `DELETE http://localhost:8081/api/users/{id}` - Xóa user
+
+### Service Discovery Dashboard
+
+- **Eureka Dashboard**: http://localhost:8761
+  - Xem danh sách các services đã đăng ký
+  - Kiểm tra trạng thái health của services
+
+### Swagger Documentation
+
+- **User Service Swagger**: http://localhost:8081/swagger-ui.html
+- **API Gateway Swagger**: http://localhost:8080/swagger-ui.html (nếu có)
+
+## 🔧 Cấu hình Database
+
+Cập nhật thông tin database trong `user-service/src/main/resources/application.properties`:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/user_db
+spring.datasource.username=root
+spring.datasource.password=123456
+```
+
+## 🏗️ Thêm Service mới
+
+Để thêm một microservice mới (ví dụ: Product Service):
+
+1. **Tạo module mới trong parent POM:**
+```xml
+<modules>
+    ...
+    <module>product-service</module>
+</modules>
+```
+
+2. **Tạo cấu trúc service:**
 ```bash
-POST /api/users
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "name": "John Doe"
-}
+mkdir -p product-service/src/main/java/com/base/cms/product
+mkdir -p product-service/src/main/resources
 ```
 
-**Response:**
-```json
-{
-  "success": true,
-  "message": "User created successfully",
-  "data": {
-    "id": 1,
+3. **Tạo pom.xml cho service:**
+```xml
+<parent>
+    <groupId>com.base</groupId>
+    <artifactId>cms-microservices</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+</parent>
+<artifactId>product-service</artifactId>
+```
+
+4. **Thêm dependency vào service:**
+```xml
+<dependency>
+    <groupId>com.base</groupId>
+    <artifactId>common-lib</artifactId>
+    <version>${project.version}</version>
+</dependency>
+```
+
+5. **Cấu hình trong API Gateway:**
+```properties
+spring.cloud.gateway.routes[1].id=product-service
+spring.cloud.gateway.routes[1].uri=lb://product-service
+spring.cloud.gateway.routes[1].predicates[0]=Path=/api/products/**
+```
+
+6. **Thêm vào docker-compose.yml:**
+```yaml
+product-service:
+  build:
+    context: .
+    dockerfile: product-service/Dockerfile
+  ...
+```
+
+## 🐳 Docker Commands
+
+```bash
+# Build tất cả images
+docker-compose build
+
+# Chạy tất cả services
+docker-compose up
+
+# Chạy ở background
+docker-compose up -d
+
+# Xem logs
+docker-compose logs -f [service-name]
+
+# Dừng services
+docker-compose stop
+
+# Xóa containers và volumes
+docker-compose down -v
+
+# Rebuild và restart
+docker-compose up --build -d
+```
+
+## 🧪 Testing
+
+### Test User Service qua API Gateway
+
+```bash
+# Tạo user mới
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
     "email": "user@example.com",
-    "name": "John Doe",
-    "createdAt": "2024-01-01T10:00:00",
-    "updatedAt": "2024-01-01T10:00:00"
-  },
-  "timestamp": "2024-01-01T10:00:00"
-}
+    "name": "John Doe"
+  }'
+
+# Lấy danh sách users
+curl http://localhost:8080/api/users
+
+# Lấy user theo ID
+curl http://localhost:8080/api/users/1
 ```
 
-## 📚 Swagger/OpenAPI Documentation
+## 📝 Best Practices
 
-Project đã được tích hợp **SpringDoc OpenAPI (Swagger)** để tự động tạo API documentation.
+1. **Service Independence**: Mỗi service có database riêng
+2. **API Gateway**: Tất cả requests đi qua API Gateway
+3. **Service Discovery**: Tự động phát hiện và load balancing
+4. **Common Library**: Shared code trong `common-lib`
+5. **Docker**: Containerization cho dễ deploy
+6. **Configuration**: Mỗi service có `application.properties` riêng
 
-### Truy cập Swagger UI
+## 🔍 Monitoring & Health Checks
 
-Sau khi chạy ứng dụng, truy cập:
-- **Swagger UI**: http://localhost:8080/swagger-ui.html
-- **OpenAPI JSON**: http://localhost:8080/api-docs
+- **Eureka Dashboard**: http://localhost:8761
+- **Service Health**: Mỗi service có health check endpoint
+- **Docker Health Checks**: Được cấu hình trong docker-compose.yml
 
-### Sử dụng Swagger Annotations
+## 🚨 Troubleshooting
 
-Để thêm documentation cho API mới, sử dụng các annotations:
+### Service không đăng ký với Eureka
+- Kiểm tra Eureka đã chạy chưa
+- Kiểm tra `eureka.client.service-url.defaultZone` trong application.properties
+- Kiểm tra network connectivity
 
-**Trong Controller:**
-```java
-@Tag(name = "Product Management", description = "APIs for managing products")
-@RestController
-@RequestMapping("/api/products")
-public class ProductController {
-    
-    @Operation(summary = "Create product", description = "Create a new product")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Product created"),
-        @ApiResponse(responseCode = "400", description = "Invalid input")
-    })
-    @PostMapping
-    public ResponseEntity<ApiResponse<ProductResponse>> createProduct(
-            @Valid @RequestBody ProductRequest request) {
-        // ...
-    }
-}
-```
+### API Gateway không route được
+- Kiểm tra service đã đăng ký với Eureka chưa
+- Kiểm tra route configuration trong API Gateway
+- Kiểm tra service name phải match với Eureka service name
 
-**Trong DTO:**
-```java
-@Schema(description = "Request DTO for creating a product")
-public class ProductRequest {
-    @Schema(description = "Product name", example = "Laptop", required = true)
-    @NotBlank
-    private String name;
-}
-```
-
-### Cấu hình Swagger
-
-Cấu hình Swagger được định nghĩa trong `OpenApiConfig.java`. Bạn có thể tùy chỉnh:
-- API title và description
-- Contact information
-- Server URLs
-- License information
-
-## 🏗️ Tạo Module mới
-
-Để tạo một module mới (ví dụ: Product), làm theo các bước:
-
-1. **Tạo Entity:**
-```java
-@Entity
-@Table(name = "products")
-public class Product {
-    // fields
-}
-```
-
-2. **Tạo Repository:**
-```java
-@Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
-}
-```
-
-3. **Tạo DTOs:**
-```java
-public class ProductRequest { }
-public class ProductResponse { }
-```
-
-4. **Tạo Service:**
-```java
-@Service
-public class ProductService {
-    // business logic
-}
-```
-
-5. **Tạo Controller:**
-```java
-@RestController
-@RequestMapping("/api/products")
-public class ProductController {
-    // REST endpoints
-}
-```
-
-## 🛠️ Best Practices
-
-1. **Sử dụng `ApiResponse<T>`** để wrap tất cả API responses
-2. **Sử dụng `@Valid`** để validate request DTOs
-3. **Sử dụng custom exceptions** (`ResourceNotFoundException`, `BadRequestException`)
-4. **Sử dụng `@Transactional`** cho các operations thay đổi database
-5. **Sử dụng Lombok** để giảm boilerplate code
-
-## 📝 Notes
-
-- Module `example` chỉ để demo cấu trúc, có thể xóa sau khi hiểu rõ
-- Tất cả exceptions sẽ được xử lý bởi `GlobalExceptionHandler`
-- CORS đã được cấu hình cho localhost:3000 và localhost:8080
+### Database connection issues
+- Kiểm tra MySQL đã chạy chưa
+- Kiểm tra database credentials
+- Kiểm tra network trong Docker (nếu dùng Docker)
 
 ## 📚 Tài liệu tham khảo
 
 - [Spring Boot Documentation](https://spring.io/projects/spring-boot)
-- [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
-- [Lombok](https://projectlombok.org/)
+- [Spring Cloud Documentation](https://spring.io/projects/spring-cloud)
+- [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway)
+- [Netflix Eureka](https://github.com/Netflix/eureka)
+- [Docker Compose](https://docs.docker.com/compose/)
+
+## 📄 License
+
+This project is licensed under the Apache 2.0 License.
