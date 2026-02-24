@@ -1,6 +1,6 @@
 package com.base.cms.user.service;
 
-import com.base.cms.common.entities.User;
+import com.base.cms.common.entities.SysUser;
 import com.base.cms.common.exception.BadRequestException;
 import com.base.cms.common.exception.ResourceNotFoundException;
 import com.base.cms.user.dto.UserRequest;
@@ -25,12 +25,12 @@ public class UserService {
             throw new BadRequestException("Email already exists");
         }
 
-        User user = User.builder()
+        SysUser user = SysUser.builder()
                 .email(request.getEmail())
                 .name(request.getName())
                 .build();
 
-        User savedUser = userRepository.save(user);
+        SysUser savedUser = userRepository.save(user);
         return mapToResponse(savedUser);
     }
 
@@ -43,14 +43,14 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserResponse getUserById(Long id) {
-        User user = userRepository.findById(id)
+        SysUser user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
         return mapToResponse(user);
     }
 
     @Transactional
     public UserResponse updateUser(Long id, UserRequest request) {
-        User user = userRepository.findById(id)
+        SysUser user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 
         if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
@@ -60,18 +60,18 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setName(request.getName());
 
-        User updatedUser = userRepository.save(user);
+        SysUser updatedUser = userRepository.save(user);
         return mapToResponse(updatedUser);
     }
 
     @Transactional
     public void deleteUser(Long id) {
-        User user = userRepository.findById(id)
+        SysUser user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
         userRepository.delete(user);
     }
 
-    private UserResponse mapToResponse(User user) {
+    private UserResponse mapToResponse(SysUser user) {
         return new UserResponse(
                 user.getId(),
                 user.getEmail(),

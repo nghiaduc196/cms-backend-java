@@ -33,7 +33,7 @@ cms-backend-java/
 ├── common-lib/              # Shared libraries
 │   ├── src/main/java/com/base/cms/common/
 │   │   ├── dto/             # Common DTOs (ApiResponse)
-│   │   ├── entities/        # All entities (BaseAuditEntity, User, ...)
+│   │   ├── entities/        # All entities (BaseAuditEntity, SysUser, ...)
 │   │   └── exception/        # Common exceptions & handlers
 │   └── pom.xml
 │
@@ -231,7 +231,7 @@ Entity đơn giản chỉ với audit cơ bản:
 @Data
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
-public class User extends BaseAuditEntity {
+public class SysUser extends BaseAuditEntity {
     private String email;
     private String name;
 }
@@ -239,9 +239,9 @@ public class User extends BaseAuditEntity {
 
 ### Business Entities
 
-Các entities cụ thể như `User`, `Product`, `Order`, ... cũng được đặt trong `common-lib/src/main/java/com/base/cms/common/entities/`:
+Các entities cụ thể như `SysUser`, `Product`, `Order`, ... cũng được đặt trong `common-lib/src/main/java/com/base/cms/common/entities/`:
 
-**Ví dụ: User Entity**
+**Ví dụ: SysUser Entity**
 ```java
 package com.base.cms.common.entities;
 
@@ -250,7 +250,7 @@ package com.base.cms.common.entities;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
-public class User extends BaseAuditEntity {
+public class SysUser extends BaseAuditEntity {
     private String email;
     private String name;
 }
@@ -260,11 +260,11 @@ public class User extends BaseAuditEntity {
 
 1. **Tất cả entities đều nằm trong `common-lib`:**
    - Base entity: `BaseAuditEntity`
-   - Business entities: `User`, `Product`, `Order`, ...
+   - Business entities: `SysUser`, `Product`, `Order`, ...
 
 2. **Import từ common-lib:**
 ```java
-import com.base.cms.common.entities.User;
+import com.base.cms.common.entities.SysUser;
 import com.base.cms.common.entities.BaseAuditEntity;
 ```
 
