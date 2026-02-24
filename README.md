@@ -33,7 +33,7 @@ cms-backend-java/
 ├── common-lib/              # Shared libraries
 │   ├── src/main/java/com/base/cms/common/
 │   │   ├── dto/             # Common DTOs (ApiResponse)
-│   │   ├── entity/          # All entities (BaseAuditEntity, User, ...)
+│   │   ├── entities/        # All entities (BaseAuditEntity, User, ...)
 │   │   └── exception/        # Common exceptions & handlers
 │   └── pom.xml
 │
@@ -239,11 +239,11 @@ public class User extends BaseAuditEntity {
 
 ### Business Entities
 
-Các entities cụ thể như `User`, `Product`, `Order`, ... cũng được đặt trong `common-lib/src/main/java/com/base/cms/common/entity/`:
+Các entities cụ thể như `User`, `Product`, `Order`, ... cũng được đặt trong `common-lib/src/main/java/com/base/cms/common/entities/`:
 
 **Ví dụ: User Entity**
 ```java
-package com.base.cms.common.entity;
+package com.base.cms.common.entities;
 
 @Entity
 @Table(name = "users")
@@ -264,8 +264,8 @@ public class User extends BaseAuditEntity {
 
 2. **Import từ common-lib:**
 ```java
-import com.base.cms.common.entity.User;
-import com.base.cms.common.entity.BaseAuditEntity;
+import com.base.cms.common.entities.User;
+import com.base.cms.common.entities.BaseAuditEntity;
 ```
 
 3. **Sử dụng Lombok annotations:**
@@ -320,8 +320,8 @@ mkdir -p product-service/src/main/resources
 
 5. **Tạo Entity trong common-lib:**
 ```java
-// File: common-lib/src/main/java/com/base/cms/common/entity/Product.java
-package com.base.cms.common.entity;
+// File: common-lib/src/main/java/com/base/cms/common/entities/Product.java
+package com.base.cms.common.entities;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,4 +1,4 @@
-package com.base.cms.common.entity;
+package com.base.cms.common.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

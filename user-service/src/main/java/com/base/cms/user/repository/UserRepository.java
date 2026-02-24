@@ -1,6 +1,6 @@
 package com.base.cms.user.repository;
 
-import com.base.cms.common.entity.User;
+import com.base.cms.common.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

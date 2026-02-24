@@ -1,6 +1,6 @@
 package com.base.cms.user.service;
 
-import com.base.cms.common.entity.User;
+import com.base.cms.common.entities.User;
 import com.base.cms.common.exception.BadRequestException;
 import com.base.cms.common.exception.ResourceNotFoundException;
 import com.base.cms.user.dto.UserRequest;
