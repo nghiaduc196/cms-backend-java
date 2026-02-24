@@ -14,7 +14,7 @@ Dự án CMS được xây dựng theo kiến trúc **Microservices** sử dụn
          ├─────────────────┐
          │                 │
 ┌────────▼────────┐  ┌─────▼──────────┐
-│ Service Discovery│  │  User Service   │
+│ Service Discovery│  │  Base Service   │
 │  (Eureka Server)│  │  (Port 8081)   │
 │   (Port 8761)    │  └────────────────┘
 └──────────────────┘
@@ -51,7 +51,7 @@ cms-backend-java/
 │   │   └── application.properties
 │   └── pom.xml
 │
-├── user-service/            # User Management Service
+├── base-service/            # Base Service
 │   ├── src/main/java/com/base/cms/user/
 │   │   ├── controller/      # REST Controllers
 │   │   ├── service/         # Business Logic
@@ -96,7 +96,7 @@ cms-backend-java/
   - CORS handling
   - API aggregation
 
-### User Service
+### Base Service
 - **Port**: 8081
 - **Database**: `user_db`
 - **Chức năng**: Quản lý users (CRUD operations)
@@ -150,9 +150,9 @@ cd service-discovery
 ../mvnw spring-boot:run
 ```
 
-**Bước 3: Khởi động User Service**
+**Bước 3: Khởi động Base Service**
 ```bash
-cd user-service
+cd base-service
 ../mvnw spring-boot:run
 ```
 
@@ -165,21 +165,21 @@ cd api-gateway
 ### Thứ tự khởi động (quan trọng)
 1. MySQL Database
 2. Service Discovery (Eureka)
-3. User Service
+3. Base Service
 4. API Gateway
 
 ## 📡 API Endpoints
 
 ### Qua API Gateway (Port 8080)
 
-- **User Service APIs:**
+- **Base Service APIs:**
   - `GET http://localhost:8080/api/users` - Lấy danh sách users
   - `GET http://localhost:8080/api/users/{id}` - Lấy user theo ID
   - `POST http://localhost:8080/api/users` - Tạo user mới
   - `PUT http://localhost:8080/api/users/{id}` - Cập nhật user
   - `DELETE http://localhost:8080/api/users/{id}` - Xóa user
 
-### Trực tiếp từ User Service (Port 8081)
+### Trực tiếp từ Base Service (Port 8081)
 
 - `GET http://localhost:8081/api/users` - Lấy danh sách users
 - `GET http://localhost:8081/api/users/{id}` - Lấy user theo ID
@@ -195,12 +195,12 @@ cd api-gateway
 
 ### Swagger Documentation
 
-- **User Service Swagger**: http://localhost:8081/swagger-ui.html
+- **Base Service Swagger**: http://localhost:8081/swagger-ui.html
 - **API Gateway Swagger**: http://localhost:8080/swagger-ui.html (nếu có)
 
 ## 🔧 Cấu hình Database
 
-Cập nhật thông tin database trong `user-service/src/main/resources/application.properties`:
+Cập nhật thông tin database trong `base-service/src/main/resources/application.properties`:
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/user_db

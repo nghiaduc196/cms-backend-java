@@ -9,10 +9,10 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>user-service</artifactId>
+	<artifactId>base-service</artifactId>
 	<packaging>jar</packaging>
-	<name>User Service</name>
-	<description>User management microservice</description>
+	<name>Base Service</name>
+	<description>Base microservice</description>
 	
 	<dependencies>
 		<!-- Spring Boot Web -->
