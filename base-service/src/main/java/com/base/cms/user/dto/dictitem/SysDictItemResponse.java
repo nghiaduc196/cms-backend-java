@@ -1,19 +1,20 @@
-package com.base.cms.user.dto;
+package com.base.cms.user.dto.dictitem;
 
+import com.base.cms.user.dto.common.BaseAuditResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @Schema(description = "Response DTO containing dictionary item information")
-public class SysDictItemResponse {
-    @Schema(description = "Item ID", example = "1")
-    private Long id;
+public class SysDictItemResponse extends BaseAuditResponseDto {
 
     @Schema(description = "Dictionary ID", example = "1")
     private Long dictId;
@@ -26,10 +27,4 @@ public class SysDictItemResponse {
 
     @Schema(description = "Sort order", example = "1")
     private Integer sortOrder;
-
-    @Schema(description = "Creation timestamp")
-    private LocalDateTime createdAt;
-
-    @Schema(description = "Last update timestamp")
-    private LocalDateTime updatedAt;
 }

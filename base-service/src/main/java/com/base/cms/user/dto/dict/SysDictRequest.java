@@ -1,4 +1,4 @@
-package com.base.cms.user.dto;
+package com.base.cms.user.dto.dict;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

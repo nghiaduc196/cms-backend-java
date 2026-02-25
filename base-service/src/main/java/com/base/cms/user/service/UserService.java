@@ -3,8 +3,8 @@ package com.base.cms.user.service;
 import com.base.cms.common.entities.SysUser;
 import com.base.cms.common.exception.BadRequestException;
 import com.base.cms.common.exception.ResourceNotFoundException;
-import com.base.cms.user.dto.UserRequest;
-import com.base.cms.user.dto.UserResponse;
+import com.base.cms.user.dto.user.UserRequest;
+import com.base.cms.user.dto.user.UserResponse;
 import com.base.cms.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -74,10 +74,10 @@ public class UserService {
     private UserResponse mapToResponse(SysUser user) {
         return new UserResponse(
                 user.getId(),
-                user.getEmail(),
-                user.getName(),
                 user.getCreatedAt(),
-                user.getUpdatedAt()
+                user.getUpdatedAt(),
+                user.getEmail(),
+                user.getName()
         );
     }
 }

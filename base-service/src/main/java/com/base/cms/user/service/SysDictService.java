@@ -4,9 +4,9 @@ import com.base.cms.common.constants.DelFlagConstants;
 import com.base.cms.common.entities.SysDict;
 import com.base.cms.common.exception.BadRequestException;
 import com.base.cms.common.exception.ResourceNotFoundException;
-import com.base.cms.user.dto.DictDTO;
-import com.base.cms.user.dto.SysDictRequest;
-import com.base.cms.user.dto.SysDictResponse;
+import com.base.cms.user.dto.dict.SysDictQueryDto;
+import com.base.cms.user.dto.dict.SysDictRequest;
+import com.base.cms.user.dto.dict.SysDictResponse;
 import com.base.cms.user.repository.SysDictRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -54,8 +54,8 @@ public class SysDictService {
      * @return Page chứa danh sách SysDictResponse và thông tin phân trang
      */
     @Transactional(readOnly = true)
-    public Page<SysDictResponse> getPage(DictDTO query, Pageable pageable) {
-        DictDTO safeQuery = query != null ? query : new DictDTO();
+    public Page<SysDictResponse> getPage(SysDictQueryDto query, Pageable pageable) {
+        SysDictQueryDto safeQuery = query != null ? query : new SysDictQueryDto();
         return sysDictRepository.getDetails(safeQuery, DelFlagConstants.DELETED, pageable).map(this::mapToResponse);
     }
 
@@ -93,10 +93,10 @@ public class SysDictService {
     private SysDictResponse mapToResponse(SysDict dict) {
         return new SysDictResponse(
                 dict.getId(),
-                dict.getDictType(),
-                dict.getDescription(),
                 dict.getCreatedAt(),
-                dict.getUpdatedAt()
+                dict.getUpdatedAt(),
+                dict.getDictType(),
+                dict.getDescription()
         );
     }
 }

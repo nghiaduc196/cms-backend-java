@@ -6,8 +6,8 @@ import com.base.cms.common.entities.SysDict;
 import com.base.cms.common.entities.SysDictItem;
 import com.base.cms.common.exception.BadRequestException;
 import com.base.cms.common.exception.ResourceNotFoundException;
-import com.base.cms.user.dto.SysDictItemRequest;
-import com.base.cms.user.dto.SysDictItemResponse;
+import com.base.cms.user.dto.dictitem.SysDictItemRequest;
+import com.base.cms.user.dto.dictitem.SysDictItemResponse;
 import com.base.cms.user.repository.SysDictItemRepository;
 import com.base.cms.user.repository.SysDictRepository;
 import lombok.RequiredArgsConstructor;
@@ -100,12 +100,12 @@ public class SysDictItemService {
     private SysDictItemResponse mapToResponse(SysDictItem item) {
         return new SysDictItemResponse(
                 item.getId(),
+                item.getCreatedAt(),
+                item.getUpdatedAt(),
                 item.getDictId(),
                 item.getItemValue(),
                 item.getDescription(),
-                item.getSortOrder(),
-                item.getCreatedAt(),
-                item.getUpdatedAt()
+                item.getSortOrder()
         );
     }
 }

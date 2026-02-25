@@ -1,8 +1,8 @@
 package com.base.cms.user.controller;
 
 import com.base.cms.common.dto.ApiResponse;
-import com.base.cms.user.dto.SysDictItemRequest;
-import com.base.cms.user.dto.SysDictItemResponse;
+import com.base.cms.user.dto.dictitem.SysDictItemRequest;
+import com.base.cms.user.dto.dictitem.SysDictItemResponse;
 import com.base.cms.user.service.SysDictItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

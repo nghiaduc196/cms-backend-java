@@ -1,7 +1,7 @@
 package com.base.cms.user.repository;
 
 import com.base.cms.common.entities.SysDict;
-import com.base.cms.user.dto.DictDTO;
+import com.base.cms.user.dto.dict.SysDictQueryDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,5 +25,5 @@ public interface SysDictRepository extends JpaRepository<SysDict, Long> {
     @Query(value = "SELECT s FROM SysDict s WHERE s.delFlag <> :delFlag " +
             "AND ((:#{#query.description} IS NULL OR s.description LIKE CONCAT(CONCAT('%', :#{#query.description}), '%')) " +
             "OR (:#{#query.dictType} IS NULL OR s.dictType LIKE CONCAT(CONCAT('%', :#{#query.dictType}), '%')))")
-    Page<SysDict> getDetails(@Param("query") DictDTO query, @Param("delFlag") String delFlag, Pageable pageable);
+    Page<SysDict> getDetails(@Param("query") SysDictQueryDto query, @Param("delFlag") String delFlag, Pageable pageable);
 }

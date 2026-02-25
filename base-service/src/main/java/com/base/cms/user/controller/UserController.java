@@ -1,8 +1,8 @@
 package com.base.cms.user.controller;
 
 import com.base.cms.common.dto.ApiResponse;
-import com.base.cms.user.dto.UserRequest;
-import com.base.cms.user.dto.UserResponse;
+import com.base.cms.user.dto.user.UserRequest;
+import com.base.cms.user.dto.user.UserResponse;
 import com.base.cms.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

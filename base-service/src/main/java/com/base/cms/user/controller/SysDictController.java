@@ -1,9 +1,9 @@
 package com.base.cms.user.controller;
 
 import com.base.cms.common.dto.ApiResponse;
-import com.base.cms.user.dto.DictDTO;
-import com.base.cms.user.dto.SysDictRequest;
-import com.base.cms.user.dto.SysDictResponse;
+import com.base.cms.user.dto.dict.SysDictQueryDto;
+import com.base.cms.user.dto.dict.SysDictRequest;
+import com.base.cms.user.dto.dict.SysDictResponse;
 import com.base.cms.user.service.SysDictService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -73,7 +73,7 @@ public class SysDictController {
             @Parameter(description = "Filter by description (LIKE)") @RequestParam(required = false) String description,
             @Parameter(description = "Filter by dictionary type (LIKE)") @RequestParam(required = false) String dictType,
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        DictDTO query = new DictDTO(description, dictType);
+        SysDictQueryDto query = new SysDictQueryDto(description, dictType);
         Page<SysDictResponse> page = sysDictService.getPage(query, pageable);
         return ResponseEntity.ok(ApiResponse.success(page));
     }

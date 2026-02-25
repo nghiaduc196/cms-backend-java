@@ -1,4 +1,4 @@
-package com.base.cms.user.dto;
+package com.base.cms.user.dto.dict;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Query/filter DTO for dictionary search")
-public class DictDTO {
+public class SysDictQueryDto {
 
     @Schema(description = "Filter by description (LIKE, optional)")
     private String description;
