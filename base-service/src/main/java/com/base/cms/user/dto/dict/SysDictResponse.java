@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,4 +23,11 @@ public class SysDictResponse extends BaseAuditResponseDto {
 
     @Schema(description = "Description", example = "User status dictionary")
     private String description;
+
+    /** Constructor đầy đủ (parent audit + trường nghiệp vụ) dùng cho mapToResponse. */
+    public SysDictResponse(Long id, LocalDateTime createdAt, LocalDateTime updatedAt, String dictType, String description) {
+        super(id, createdAt, updatedAt);
+        this.dictType = dictType;
+        this.description = description;
+    }
 }

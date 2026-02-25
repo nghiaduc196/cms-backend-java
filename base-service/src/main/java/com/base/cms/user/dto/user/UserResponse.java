@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,4 +23,11 @@ public class UserResponse extends BaseAuditResponseDto {
 
     @Schema(description = "User full name", example = "John Doe")
     private String name;
+
+    /** Constructor đầy đủ (parent audit + trường nghiệp vụ) dùng cho mapToResponse. */
+    public UserResponse(Long id, LocalDateTime createdAt, LocalDateTime updatedAt, String email, String name) {
+        super(id, createdAt, updatedAt);
+        this.email = email;
+        this.name = name;
+    }
 }

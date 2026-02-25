@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,6 +20,16 @@ public class SysDictItemResponse extends BaseAuditResponseDto {
 
     @Schema(description = "Dictionary ID", example = "1")
     private Long dictId;
+
+    /** Constructor đầy đủ (parent audit + trường nghiệp vụ) dùng cho mapToResponse. */
+    public SysDictItemResponse(Long id, LocalDateTime createdAt, LocalDateTime updatedAt,
+                               Long dictId, String itemValue, String description, Integer sortOrder) {
+        super(id, createdAt, updatedAt);
+        this.dictId = dictId;
+        this.itemValue = itemValue;
+        this.description = description;
+        this.sortOrder = sortOrder;
+    }
 
     @Schema(description = "Item value", example = "ACTIVE")
     private String itemValue;
