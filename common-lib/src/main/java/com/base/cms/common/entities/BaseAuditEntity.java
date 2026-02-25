@@ -1,5 +1,6 @@
 package com.base.cms.common.entities;
 
+import com.base.cms.common.constants.CommonConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -34,7 +35,7 @@ public abstract class BaseAuditEntity {
     /**
      * 0-normal, 1-delete
      */
-    @Column(name = "del_flag", columnDefinition = "CHAR")
+    @Column(name = "del_flag", columnDefinition = "CHAR(1) DEFAULT '0'")
     @Schema(description = "Delete mark, 1: deleted, 0: normal")
     @Length(max = 1, min = 1, message = "Delete mark must be 1 characters")
     private String delFlag;
@@ -42,13 +43,14 @@ public abstract class BaseAuditEntity {
     /**
      * Lock tag
      */
-    @Column(name = "lock_flag", columnDefinition = "CHAR")
+    @Column(name = "lock_flag", columnDefinition = "CHAR(1) DEFAULT '0'")
     @Schema(description = "Lock Mark, 9: locked, 0: normal")
     @Length(max = 1, min = 1, message = "Lock mark must be 1 characters")
     private String lockFlag;
 
-    @Column(name = "system_flag")
-    @Schema(description = "Whether the system is built-in")
+    @Column(name = "system_flag", columnDefinition = "CHAR(1) DEFAULT '0'")
+    @Schema(description = "Whether the system is built-in, 1: built-in, 0: not built-in")
+    @Length(max = 1, min = 1, message = "System flag must be 1 characters")
     private String systemFlag;
 
     @PrePersist
@@ -58,6 +60,15 @@ public abstract class BaseAuditEntity {
         }
         if (updatedAt == null) {
             updatedAt = LocalDateTime.now();
+        }
+        if (delFlag == null) {
+            delFlag = CommonConstants.NORMAL;
+        }
+        if (lockFlag == null) {
+            lockFlag = CommonConstants.NORMAL;;
+        }
+        if (systemFlag == null) {
+            systemFlag = CommonConstants.NORMAL;;
         }
     }
     
