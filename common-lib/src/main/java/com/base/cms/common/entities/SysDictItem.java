@@ -30,11 +30,6 @@ public class SysDictItem extends BaseAuditEntity {
     @Length(max = 200, message = "Item value must be less than 200 characters")
     private String itemValue;
 
-    @Column(name = "description")
-    @Schema(description = "Description")
-    @Length(max = 500, message = "Description must be less than 500 characters")
-    private String description;
-
     @Column(name = "sort_order")
     @Schema(description = "Sort order")
     private Integer sortOrder;

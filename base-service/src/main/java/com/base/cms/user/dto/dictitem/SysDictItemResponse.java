@@ -21,7 +21,16 @@ public class SysDictItemResponse extends BaseAuditResponseDto {
     @Schema(description = "Dictionary ID", example = "1")
     private Long dictId;
 
-    /** Constructor đầy đủ (parent audit + trường nghiệp vụ) dùng cho mapToResponse. */
+    @Schema(description = "Item value", example = "ACTIVE")
+    private String itemValue;
+
+    @Schema(description = "Description", example = "Active status")
+    private String description;
+
+    @Schema(description = "Sort order", example = "1")
+    private Integer sortOrder;
+
+        /** Constructor đầy đủ (parent audit + trường nghiệp vụ) dùng cho mapToResponse. */
     public SysDictItemResponse(Long id, LocalDateTime createdAt, LocalDateTime updatedAt,
                                Long dictId, String itemValue, String description, Integer sortOrder) {
         super(id, createdAt, updatedAt);
@@ -31,12 +40,4 @@ public class SysDictItemResponse extends BaseAuditResponseDto {
         this.sortOrder = sortOrder;
     }
 
-    @Schema(description = "Item value", example = "ACTIVE")
-    private String itemValue;
-
-    @Schema(description = "Description", example = "Active status")
-    private String description;
-
-    @Schema(description = "Sort order", example = "1")
-    private Integer sortOrder;
 }

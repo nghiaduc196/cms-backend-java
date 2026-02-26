@@ -25,9 +25,4 @@ public class SysDict extends BaseAuditEntity {
     @Schema(description = "Dictionary type")
     @Length(max = 100, message = "Dictionary type must be less than 100 characters")
     private String dictType;
-
-    @Column(name = "description")
-    @Schema(description = "Description")
-    @Length(max = 500, message = "Description must be less than 500 characters")
-    private String description;
 }

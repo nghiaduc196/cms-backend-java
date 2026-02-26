@@ -19,11 +19,10 @@ public interface SysDictRepository extends JpaRepository<SysDict, Long> {
     boolean existsByDictType(String dictType);
 
     /**
-     * Lấy danh sách SysDict có phân trang, lọc theo delFlag và điều kiện tìm kiếm (description, dictType).
-     * Loại trừ bản ghi đã xóa (delFlag = "1"), tùy chọn LIKE theo description hoặc dictType khi query truyền vào.
+     * Lấy danh sách SysDict có phân trang, lọc theo delFlag và dictType.
+     * Loại trừ bản ghi đã xóa (delFlag = "1"). Description không còn trên entity (nằm ở bảng sys_dict_translation) nên chỉ lọc theo dictType.
      */
     @Query(value = "SELECT s FROM SysDict s WHERE s.delFlag <> :delFlag " +
-            "AND ((:#{#query.description} IS NULL OR s.description LIKE CONCAT(CONCAT('%', :#{#query.description}), '%')) " +
-            "OR (:#{#query.dictType} IS NULL OR s.dictType LIKE CONCAT(CONCAT('%', :#{#query.dictType}), '%')))")
+            "AND (:#{#query.dictType} IS NULL OR s.dictType LIKE CONCAT(CONCAT('%', :#{#query.dictType}), '%'))")
     Page<SysDict> getDetails(@Param("query") SysDictQueryDto query, @Param("delFlag") String delFlag, Pageable pageable);
 }

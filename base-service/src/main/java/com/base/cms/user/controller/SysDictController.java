@@ -4,6 +4,7 @@ import com.base.cms.common.dto.ApiResponse;
 import com.base.cms.user.dto.dict.SysDictQueryDto;
 import com.base.cms.user.dto.dict.SysDictRequest;
 import com.base.cms.user.dto.dict.SysDictResponse;
+import com.base.cms.user.dto.dict.SysDictTranslationRequest;
 import com.base.cms.user.service.SysDictService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -48,7 +49,7 @@ public class SysDictController {
                 .body(ApiResponse.success("Dictionary created successfully", response));
     }
 
-    @Operation(summary = "Get all dictionaries", description = "Retrieve a list of all dictionaries")
+    @Operation(summary = "Get all dictionaries", description = "Retrieve a list of all dictionaries. Optional locale (vi, en, ...) for translated description.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
@@ -56,8 +57,9 @@ public class SysDictController {
                     content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping
-    public ResponseEntity<ApiResponse<List<SysDictResponse>>> getAll() {
-        List<SysDictResponse> list = sysDictService.getAll();
+    public ResponseEntity<ApiResponse<List<SysDictResponse>>> getAll(
+            @Parameter(description = "Locale for translation (vi, en, ...). Optional.") @RequestParam(required = false) String locale) {
+        List<SysDictResponse> list = sysDictService.getAll(locale);
         return ResponseEntity.ok(ApiResponse.success(list));
     }
 
@@ -72,9 +74,10 @@ public class SysDictController {
     public ResponseEntity<ApiResponse<Page<SysDictResponse>>> getPage(
             @Parameter(description = "Filter by description (LIKE)") @RequestParam(required = false) String description,
             @Parameter(description = "Filter by dictionary type (LIKE)") @RequestParam(required = false) String dictType,
+            @Parameter(description = "Locale for translation (vi, en, ...). Optional.") @RequestParam(required = false) String locale,
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         SysDictQueryDto query = new SysDictQueryDto(description, dictType);
-        Page<SysDictResponse> page = sysDictService.getPage(query, pageable);
+        Page<SysDictResponse> page = sysDictService.getPage(query, pageable, locale);
         return ResponseEntity.ok(ApiResponse.success(page));
     }
 
@@ -90,8 +93,9 @@ public class SysDictController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<SysDictResponse>> getById(
-            @Parameter(description = "Dictionary ID", required = true) @PathVariable Long id) {
-        SysDictResponse response = sysDictService.getById(id);
+            @Parameter(description = "Dictionary ID", required = true) @PathVariable Long id,
+            @Parameter(description = "Locale for translation (vi, en, ...). Optional.") @RequestParam(required = false) String locale) {
+        SysDictResponse response = sysDictService.getById(id, locale);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -130,5 +134,18 @@ public class SysDictController {
             @Parameter(description = "Dictionary ID", required = true) @PathVariable Long id) {
         sysDictService.delete(id);
         return ResponseEntity.ok(ApiResponse.success("Dictionary deleted successfully", null));
+    }
+
+    @Operation(summary = "Save dictionary translation", description = "Add or update translation for a dictionary by locale (vi, en, ...). Supports multiple languages.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Translation saved"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Dictionary not found")
+    })
+    @PutMapping("/{id}/translations")
+    public ResponseEntity<ApiResponse<Void>> saveTranslation(
+            @Parameter(description = "Dictionary ID", required = true) @PathVariable Long id,
+            @Valid @RequestBody SysDictTranslationRequest request) {
+        sysDictService.saveTranslation(id, request);
+        return ResponseEntity.ok(ApiResponse.success("Translation saved", null));
     }
 }
